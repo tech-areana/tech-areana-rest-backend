@@ -1,7 +1,8 @@
-const express = require('express');
-const cors    = require('cors'); // ← 追加
-const logger  = require('./config/logger');
-const routes  = require('./routes');
+import { NextFunction, Request, Response } from "express";
+import express from 'express';
+import cors from 'cors';
+import routes from './routes'; // ルーティングのインポート
+import logger from "./config/logger";
 
 const app = express();
 
@@ -18,9 +19,9 @@ app.use(express.json());
 app.use(routes);
 
 // エラーハンドラ
-app.use((err, _req, res, _next) => {
+app.use((err:unknown, _req:Request, res:Response, _next:NextFunction) => {
   logger.error(err);
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
-module.exports = app;
+export default app;

@@ -5,3 +5,7 @@
 node_modules/
 
 credentials/
+
+
+# ビルド成果物の除外
+/build/

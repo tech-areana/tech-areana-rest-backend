@@ -29,7 +29,7 @@
         - ./src:/app/src
         - ./package.json:/app/package.json:ro
         - ./credentials:/app/credentials:ro 
-      command: npm run dev
+      command:  node build/server.js 
       depends_on:
         db:
           condition: service_healthy

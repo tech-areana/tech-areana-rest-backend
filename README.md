@@ -4,10 +4,18 @@ Node.js + Express を使ったバックエンドアプリケーションです�
 ## 📦 主な技術スタック
 - Node.js
 - Express
-- dotenv（環境変数管理）
+- docker （コンテナ化） 
 
-## 依存関係をインストール
-npm install
 
-## 開発サーバの起動
-npm run dev
+## 🚀 セットアップと起動方法
+- rootディレクトリに`.env`、`credentials/serviceAccountKey.json` ファイルを作成。
+
+
+### Docker を使った起動方法
+```bash
+# Docker イメージのビルド
+docker compose build
+
+# コンテナの起動
+docker compose up
+```
