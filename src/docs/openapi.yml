@@ -1,0 +1,237 @@
+openapi: 3.0.0
+info:
+  title: Quiz API
+  version: 1.0.0
+  description: Express + MySQL クイズアプリ
+servers:
+  - url: http://localhost:8000
+  - url: https://backend-w6iu.onrender.com
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RankingItem:
+      type: object
+      properties:
+        userId: { type: string, example: "user001" }
+        userName: { type: string, example: "Alice" }
+        rank: { type: integer, example: 1 }
+        correctNum: { type: integer, example: 42 }
+
+    UserStats:
+      type: object
+      properties:
+        hardClearNum: { type: integer }
+        normalClearNum: { type: integer }
+        easyClearNum: { type: integer }
+        hardCorrectNum: { type: integer }
+        normalCorrectNum: { type: integer }
+        easyCorrectNum: { type: integer }
+
+    UserInfo:
+      type: object
+      properties:
+        userId: { type: string }
+        email: { type: string }
+        userName: { type: string }
+        iconPath: { type: string }
+        role: { type: string }
+        stats:
+          $ref: '#/components/schemas/UserStats'
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Question:
+      type: object
+      properties:
+        questionId: { type: string }
+        question: { type: string }
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              key: { type: string }
+              text: { type: string }
+        answer: { type: string }
+        explanation: { type: string }
+
+paths:
+  /api/auth/login:
+    post:
+      summary: ユーザー登録またはサインイン
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, userName, email]
+              properties:
+                userId: { type: string }
+                userName: { type: string }
+                email: { type: string }
+      responses:
+        "200":
+          description: JWT とユーザーIDを返す
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId: { type: string }
+                  token: { type: string }
+
+  /api/users/{userId}:
+    get:
+      summary: 自分のユーザー情報取得
+      tags: [Users]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: user001
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: ユーザー情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+
+    put:
+      summary: 自分のユーザー情報更新
+      tags: [Users]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: user001
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName: { type: string }
+                iconPath: { type: string }
+      responses:
+        "200":
+          description: 更新完了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: "更新完了" }
+
+  /api/questions/{level}/{levelId}:
+    get:
+      summary: 特定の質問を取得
+      tags: [Questions]
+      parameters:
+        - in: path
+          name: level
+          required: true
+          schema:
+            type: string
+            example: easy
+        - in: path
+          name: levelId
+          required: true
+          schema:
+            type: string
+            example: 1
+      responses:
+        "200":
+          description: 質問取得
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+
+  /api/questions/isCorrect:
+    post:
+      summary: 質問への正誤を登録
+      tags: [Questions]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId: { type: string }
+                questionLevel: { type: string }
+                isCorrect: { type: boolean }
+      responses:
+        "200":
+          description: 正誤登録完了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: "正誤登録完了" }
+
+  /api/rankings:
+    get:
+      summary: 各levelのランキング上位10人を取得
+      tags: [Rankings]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: ランキング情報
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hard:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RankingItem'
+                  normal:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RankingItem'
+                  easy:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RankingItem'
+
+  /api/questions/random:
+    get:
+      summary: ランダムにクイズを10問取得
+      tags: [Questions]
+      responses:
+        "200":
+          description: ランダムな10問のクイズ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+
+
