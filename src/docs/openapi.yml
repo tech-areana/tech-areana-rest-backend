@@ -6,6 +6,7 @@ info:
 servers:
   - url: http://localhost:8000
   - url: https://backend-w6iu.onrender.com
+  - url: https://tech-areana-rest-backend.onrender.com
 
 components:
   securitySchemes:

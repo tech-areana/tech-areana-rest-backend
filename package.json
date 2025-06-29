@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
         "build": "tsc",
+        "copy-sql": "mkdir -p build/db && cp src/db/*.sql build/db/",
         "start": "node build/server.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

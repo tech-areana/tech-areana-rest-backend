@@ -9,6 +9,7 @@ RUN npm ci
 COPY . .
 RUN npm run build                     # build/ へ JS 出力
 
+RUN mkdir -p build/db && cp init.sql build/db/
 # ★ YML を build/docs/ にコピー（パスは実際の配置に合わせてください）
 RUN mkdir -p build/docs && cp src/docs/openapi.yml build/docs/
 
