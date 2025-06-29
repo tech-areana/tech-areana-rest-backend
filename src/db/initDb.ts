@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { Pool } from 'pg';
 import config from '../config';
+import dotenv from 'dotenv';
+dotenv.config();                 // .env 読み込み
 
 
 const pool = new Pool({

@@ -1,22 +1,23 @@
--- クイズユーザーが存在しなければ作成
+-- プロダクション用 init.prod.sql
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT FROM pg_catalog.pg_roles WHERE rolname = 'quizuser'
-  ) THEN
-    CREATE ROLE quizuser LOGIN PASSWORD 'quizpass';
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'quizusers') THEN
+    CREATE ROLE quizusers LOGIN PASSWORD 'GrqbhiMBi33VXxz0vG9Dg46soNcCEpv1';
   END IF;
-END
-$$;
+END$$;
 
--- クイズユーザーにDBとスキーマの権限を付与
-GRANT ALL PRIVILEGES ON DATABASE quiz TO quizuser;
-GRANT USAGE, CREATE ON SCHEMA public TO quizuser;  -- ★ これを追加！
+GRANT ALL PRIVILEGES ON DATABASE quizes_hjc9 TO quizusers;
+GRANT USAGE, CREATE ON SCHEMA public TO quizusers;
 
+-- ↓ テーブル DROP / CREATE / INSERT はそのまま ↓
 
--- === TABLES ==============================================================
-DROP TABLE IF EXISTS trx_user;
-DROP TABLE IF EXISTS quizzes;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO quizusers;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO quizusers;
+
+ALTER TABLE trx_user OWNER TO quizusers;
+ALTER TABLE quizzes  OWNER TO quizusers;
+
 
 CREATE TABLE trx_user (
   u_id TEXT PRIMARY KEY,
